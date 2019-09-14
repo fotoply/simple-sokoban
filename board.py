@@ -1,7 +1,5 @@
 import copy
 
-output = None
-
 ## Board data structure ##
 ## _ = empty space
 ## # = wall space
@@ -14,7 +12,6 @@ moveables = []
 playerX = 0
 playerY = 0
 moveCount = 0
-
 
 def getBoard():
     global board, moveables
@@ -36,7 +33,8 @@ def getMoveCount():
 
 
 def initBoard(newBoard):
-    global board, moveables
+    global board, moveables, moveCount
+    moveCount = 0
     board = newBoard.copy()
     for x in range(len(board)):
         for y in range(len(board[x])):
@@ -49,10 +47,6 @@ def initBoard(newBoard):
                 board[x][y] = "_"
                 moveables.append((x, y))
 
-
-def registerOutput(outputStream): ## Doesn't work atm
-    global output
-    output = outputStream
 
 
 def getSpaceType(x, y):
