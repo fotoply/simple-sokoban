@@ -1,16 +1,19 @@
 import PySimpleGUI as sg
 from board import move, getBoard, initBoard, isGameWon
+from loader import getBoardFromFile
 
 layout = [[sg.Canvas(size=(500, 500), background_color='red', key= 'canvas')]]
 window = sg.Window('Sokoban', return_keyboard_events=True, layout=layout)
 window.finalize()
 
-initBoard([["#", "#", "#", "#", "#", "#"],
-           ["#", "_", "_", "_", "_", "#"],
-           ["#", "_", "p", "m", "o", "#"],
-           ["#", "_", "m", "_", "_", "#"],
-           ["#", "_", "o", "_", "_", "#"],
-           ["#", "#", "#", "#", "#", "#"]])
+#initBoard([["#", "#", "#", "#", "#", "#"],
+#           ["#", "_", "_", "_", "_", "#"],
+#           ["#", "_", "p", "m", "o", "#"],
+#           ["#", "_", "m", "_", "_", "#"],
+#           ["#", "_", "o", "_", "_", "#"],
+#           ["#", "#", "#", "#", "#", "#"]])
+
+initBoard(getBoardFromFile("gamesetups/level2.txt"))
 
 canvas = window.Element('canvas')
 
