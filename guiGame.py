@@ -1,5 +1,5 @@
 import PySimpleGUI as sg
-from board import move, getBoard, initBoard, isGameWon
+from board import  Board
 from loader import getBoardFromFile
 
 layout = [[sg.Canvas(size=(500, 500), background_color='red', key= 'canvas')]]
@@ -13,16 +13,19 @@ window.finalize()
 #           ["#", "_", "o", "_", "_", "#"],
 #           ["#", "#", "#", "#", "#", "#"]])
 
-initBoard(getBoardFromFile("gamesetups/level2.txt"))
+board = Board()
+
+board.initBoard(getBoardFromFile("gamesetups/level2.txt"))
 
 canvas = window.Element('canvas')
 
 def drawBoard():
+    global board
     canvas.TKCanvas.delete("all")
-    board = getBoard()
-    for x in range(len(board)):
-        for y in range(len(board[x])):
-            space = board[x][y]
+    boardState = board.getBoard()
+    for x in range(len(boardState)):
+        for y in range(len(boardState[x])):
+            space = boardState[x][y]
             visualX = x*20
             visualY = y*20
             if space == "#":
@@ -40,9 +43,9 @@ while True:
     if event is not None:
         inputValue = event.split(":")[0]
         print(inputValue)
-        move(inputValue)
+        board.move(inputValue)
         drawBoard()
-        if isGameWon():
+        if board.isGameWon():
             break
     else:
         break
