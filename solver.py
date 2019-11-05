@@ -17,7 +17,7 @@ def findSolution(board):
     while finalBoard is None:
         while len(openBoards) > 0:
             print(str(len(openBoards)) + "/" + str(maxDepth) + " vs " + str(len(closedBoards)))
-            currentBoard = openBoards[len(openBoards) - 1]
+            currentBoard = openBoards.pop()
 
             newActions = currentBoard.exploreActions()
             for action in newActions:
@@ -28,7 +28,8 @@ def findSolution(board):
                         openBoards.append(action)
                 else:
                     if closedBoards[action.key].depth > action.depth:
-                        closedBoards[action.key] = action
+                        ##closedBoards[action.key] = action ##TODO FIX ME SO THAT THE SHORTEST PATH IS ALWAYS FOUND
+                        action.updateChildren(closedBoards)
 
                 if action.isWon():
                     if finalBoard is None:
@@ -36,16 +37,17 @@ def findSolution(board):
                     else:
                         if finalBoard.depth > action.depth:
                             finalBoard = action
-            openBoards.remove(currentBoard)
             closedBoards[currentBoard.key] = currentBoard
 
-        if len(openBoards) == 0 and len(futureBoards) == 0:
+        if len(openBoards) == 0 and finalBoard is None and len(futureBoards) == 0:
             print("no solution was found")
             return
 
-        maxDepth += 1
-        for b in futureBoards:
-            openBoards.append(b)
+        if finalBoard is None:
+            print("Increasing max depth")
+            maxDepth += 1
+            for b in futureBoards:
+                openBoards.append(b)
 
     finalPath = list()
     workingBoard = finalBoard

@@ -15,9 +15,9 @@ class BoardNode:
         for y in range(len(state)):
             for x in range(len(state[y])):
                 cell = state[y][x]
-                if cell == "p":
+                if cell == "p" or cell == "P":
                     playerHash = str(y).zfill(2) + str(x).zfill(2)
-                elif cell == "m":
+                elif cell == "m" or cell == "M":
                     moveableHash += str(y).zfill(2) + str(x).zfill(2)
         return playerHash + moveableHash
 
@@ -42,3 +42,9 @@ class BoardNode:
                 self.actionMap[option] = None
 
         return furtherActions
+
+    def updateChildren(self, closedBoards):
+        for key, child in self.actionMap:
+            closedBoards[child].depth = self.depth+1
+            closedBoards[child].updateChildren(closedBoards)
+
