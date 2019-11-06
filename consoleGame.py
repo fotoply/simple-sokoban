@@ -1,4 +1,5 @@
-from board import move, getBoard, initBoard, isGameWon
+from board import Board
+from loader import getBoardFromFile
 
 
 def clearConsole():
@@ -8,26 +9,23 @@ def clearConsole():
 
 def update(): ## Rendering is incorrect, check GUI version to see that moving does work
     clearConsole()
-    board = getBoard()
+    boardState = board.getBoard()
     line = ""
-    for i in range(len(board)):
-        line += "".join(board[i]) + "\n"
+    for i in range(len(boardState)):
+        line += "".join(boardState[i]) + "\n"
 
     print(line)
 
-initBoard([["#", "#", "#", "#", "#", "#"],
-           ["#", "_", "_", "_", "_", "#"],
-           ["#", "_", "p", "m", "o", "#"],
-           ["#", "_", "m", "_", "_", "#"],
-           ["#", "_", "o", "_", "_", "#"],
-           ["#", "#", "#", "#", "#", "#"]])
+board = Board()
+
+board.initBoard(getBoardFromFile("gamesetups/level2.txt"))
 update()
 
-while not isGameWon():
+while not board.isGameWon():
     direction = input("Input direction! (l/r/u/d)")
     if direction == "q":
         break
-    move(direction)
+    board.move(direction)
     update()
 
 print("Game finished")

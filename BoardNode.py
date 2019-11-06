@@ -8,6 +8,7 @@ class BoardNode:
         self.previous = previous
         self.actionMap = {}
         self.won = False
+        #print(self.key)
 
     def getHash(self, state):
         playerHash = ""
@@ -45,6 +46,7 @@ class BoardNode:
 
     def updateChildren(self, closedBoards):
         for key, child in self.actionMap:
-            closedBoards[child].depth = self.depth+1
-            closedBoards[child].updateChildren(closedBoards)
+            if closedBoards[child].depth > self.depth +1:
+                closedBoards[child].depth = self.depth+1
+                closedBoards[child].updateChildren(closedBoards)
 

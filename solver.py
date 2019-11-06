@@ -16,7 +16,7 @@ def findSolution(board):
 
     while finalBoard is None:
         while len(openBoards) > 0:
-            print(str(len(openBoards)) + "/" + str(maxDepth) + " vs " + str(len(closedBoards)))
+            #print(str(len(openBoards)) + "/" + str(maxDepth) + " vs " + str(len(closedBoards)))
             currentBoard = openBoards.pop()
 
             newActions = currentBoard.exploreActions()
@@ -28,8 +28,9 @@ def findSolution(board):
                         openBoards.append(action)
                 else:
                     if closedBoards[action.key].depth > action.depth:
-                        ##closedBoards[action.key] = action ##TODO FIX ME SO THAT THE SHORTEST PATH IS ALWAYS FOUND
+                        closedBoards[action.key] = action
                         action.updateChildren(closedBoards)
+                        action.exploreActions()
 
                 if action.isWon():
                     if finalBoard is None:
@@ -52,6 +53,9 @@ def findSolution(board):
     finalPath = list()
     workingBoard = finalBoard
     while workingBoard.previous is not None:
+        if len(closedBoards[workingBoard.previous].actionMap) == 0:
+            closedBoards[workingBoard.previous].exploreActions()
+            print("Missing action map, recalculating")
         for key in closedBoards[workingBoard.previous].actionMap:
             actionTarget = closedBoards[workingBoard.previous].actionMap[key]
             if actionTarget is None:
@@ -68,10 +72,10 @@ def findSolution(board):
     finalString += "X"
     print(finalString)
 
-findSolution(getBoardFromFile("gamesetups/level0.txt"))
-input()
-findSolution(getBoardFromFile("gamesetups/level1.txt"))
-input()
+#findSolution(getBoardFromFile("gamesetups/level0.txt"))
+#input()
+#findSolution(getBoardFromFile("gamesetups/level1.txt"))
+#input()
 findSolution(getBoardFromFile("gamesetups/level2.txt"))
 input()
 findSolution(getBoardFromFile("gamesetups/level3.txt"))
