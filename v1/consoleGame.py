@@ -1,5 +1,5 @@
-from board import Board
-from loader import getBoardFromFile
+from v1.board import Board
+from v1.loader import getBoardFromFile
 
 
 def clearConsole():
@@ -18,7 +18,7 @@ def update(): ## Rendering is incorrect, check GUI version to see that moving do
 
 board = Board()
 
-board.initBoard(getBoardFromFile("gamesetups/level2.txt"))
+board.initBoard(getBoardFromFile("../gamesetups/level2.txt"))
 update()
 
 while not board.isGameWon():

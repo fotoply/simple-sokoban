@@ -1,6 +1,6 @@
 import PySimpleGUI as sg
-from board import  Board
-from loader import getBoardFromFile
+from v1.board import  Board
+from v1.loader import getBoardFromFile
 
 layout = [[sg.Canvas(size=(500, 500), background_color='red', key= 'canvas')]]
 window = sg.Window('Sokoban', return_keyboard_events=True, layout=layout)
@@ -15,7 +15,7 @@ window.finalize()
 
 board = Board()
 
-board.initBoard(getBoardFromFile("gamesetups/level3.txt"))
+board.initBoard(getBoardFromFile("../gamesetups/level3.txt"))
 
 canvas = window.Element('canvas')
 

@@ -1,6 +1,5 @@
-from board import Board
-from loader import getBoardFromFile
-from BoardNode import BoardNode
+from v1.loader import getBoardFromFile
+from v1.BoardNode import BoardNode
 
 
 def findSolution(board):
@@ -72,10 +71,10 @@ def findSolution(board):
     finalString += "X"
     print(finalString)
 
-#findSolution(getBoardFromFile("gamesetups/level0.txt"))
+#findSolution(getBoardFromFile("../gamesetups/level0.txt"))
 #input()
-#findSolution(getBoardFromFile("gamesetups/level1.txt"))
+#findSolution(getBoardFromFile("../gamesetups/level1.txt"))
 #input()
-findSolution(getBoardFromFile("gamesetups/level2.txt"))
+findSolution(getBoardFromFile("../gamesetups/level2.txt"))
 input()
-findSolution(getBoardFromFile("gamesetups/level3.txt"))
+findSolution(getBoardFromFile("../gamesetups/level3.txt"))

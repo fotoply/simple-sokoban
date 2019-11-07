@@ -27,7 +27,7 @@ class BoardNode:
 
     def exploreActions(self):
         global availableOptions
-        from board import Board
+        from v1.board import Board
         furtherActions = list()
         for option in availableOptions:
             board = Board()
