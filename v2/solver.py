@@ -1,3 +1,5 @@
+import time
+
 from v2.board import Board
 
 
@@ -43,6 +45,7 @@ def findSolution(board):
                 openStates.append(state)
             futureStates.clear()
         else:
+            print("Total states explored: " + str(len(closedStates)))
             state = finalState
             finalPath = list()
             while state.previousState is not None:
@@ -90,4 +93,6 @@ def processState(closedStates, finalState, futureStates, maxDepth, openStates, c
 if __name__ == "__main__":
     from v2.loader import getBoardFromFile
 
+    beforeTime = time.time()
     findSolution(getBoardFromFile("../gamesetups/level3.txt"))
+    print("Time taken:" + str(time.time()-beforeTime))

@@ -146,9 +146,13 @@ class Board:
 
     def replicateBoard(self):
         newBoard = Board()
-        newBoard.board = copy.deepcopy(self.board)
-        newBoard.canisters = copy.deepcopy(self.canisters)
-        newBoard.player = copy.deepcopy(self.player)
+        newBoard.board = list()
+        for row in self.board:
+            newBoard.board.append(copy.copy(row))
+        newBoard.canisters = list()
+        for can in self.canisters:
+            newBoard.canisters.append(can.duplicate())
+        newBoard.player = self.player.duplicate()
         return newBoard
 
     def getEdgeCell(self):
@@ -231,6 +235,12 @@ class PathState:
 
 
 class Player(MoveableObject):
+    def duplicate(self):
+        newPlayer = Player(self.x, self.y)
+        newPlayer.previousX = self.previousX
+        newPlayer.previousY = self.previousY
+        return newPlayer
+
     def calculatePositionToPerformMove(self, direction, x, y):
         if direction == UP_MOVE:
             return x, y + 1
@@ -333,3 +343,9 @@ class Canister(MoveableObject):
             moves.append(LEFT_MOVE)
 
         return moves
+
+    def duplicate(self):
+        can = Canister(self.x, self.y)
+        can.previousX = self.previousX
+        can.previousY = self.previousY
+        return can
