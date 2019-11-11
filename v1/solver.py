@@ -48,6 +48,7 @@ def findSolution(board):
             maxDepth += 1
             for b in futureBoards:
                 openBoards.append(b)
+            futureBoards = list()
 
     finalPath = list()
     workingBoard = finalBoard
@@ -71,10 +72,10 @@ def findSolution(board):
     finalString += "X"
     print(finalString)
 
-#findSolution(getBoardFromFile("../gamesetups/level0.txt"))
-#input()
-#findSolution(getBoardFromFile("../gamesetups/level1.txt"))
-#input()
+findSolution(getBoardFromFile("../gamesetups/level0.txt"))
+input()
+findSolution(getBoardFromFile("../gamesetups/level1.txt"))
+input()
 findSolution(getBoardFromFile("../gamesetups/level2.txt"))
 input()
 findSolution(getBoardFromFile("../gamesetups/level3.txt"))

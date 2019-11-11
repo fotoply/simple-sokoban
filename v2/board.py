@@ -1,6 +1,7 @@
 import copy
 import enum
-from typing import List
+import math
+from typing import List, Tuple
 
 WALL_CHARACTER = "#"
 PLAYER_CHARACTER = "p"
@@ -83,14 +84,14 @@ class Board:
                         row.append(Cell(CellTypes.objective))
                     else:
                         row.append(Cell(CellTypes.empty))
-                    row[len(row)-1].setPlayer(True)
+                    row[len(row) - 1].setPlayer(True)
                     self.player = Player(x, y)
                 elif stringCell == CANISTER_CHARACTER or stringCell == CANISTER_ON_OBJECTIVE_CHARACTER:
                     if stringCell == CANISTER_ON_OBJECTIVE_CHARACTER:
                         row.append(Cell(CellTypes.objective))
                     else:
                         row.append(Cell(CellTypes.empty))
-                    row[len(row)-1].setCanister(True)
+                    row[len(row) - 1].setCanister(True)
                     can = Canister(x, y)
                     self.canisters.append(can)
                 else:
@@ -101,9 +102,8 @@ class Board:
         actions = {}
         for can in self.canisters:
             position = (can.x, can.y)
-            actions[position] = can.getPossibleMoves(self.getSurroundings(can.x, can.y))
+            actions[position] = can.getAvailableMoves(self.getSurroundings(can.x, can.y))
         return actions
-
 
     def getHash(self):
         self.canisters.sort(key=lambda x: (x.x, x.y))
@@ -146,7 +146,7 @@ class Board:
 
     def replicateBoard(self):
         newBoard = Board()
-        newBoard.board = copy.copy(self.board)
+        newBoard.board = copy.deepcopy(self.board)
         newBoard.canisters = copy.deepcopy(self.canisters)
         newBoard.player = copy.deepcopy(self.player)
         return newBoard
@@ -156,10 +156,10 @@ class Board:
 
     def getSurroundings(self, x, y):
         surroundings = list()
-        surroundings.append(self.getCell(x + 1, y))
-        surroundings.append(self.getCell(x - 1, y))
-        surroundings.append(self.getCell(x, y + 1))
         surroundings.append(self.getCell(x, y - 1))
+        surroundings.append(self.getCell(x + 1, y))
+        surroundings.append(self.getCell(x, y + 1))
+        surroundings.append(self.getCell(x - 1, y))
         return surroundings
 
     def moveCanister(self, x, y, direction):
@@ -167,9 +167,21 @@ class Board:
         can.move(direction)
 
         self.clearCell(x, y)
-        newCell = Cell(self.getCell(can.x, can.y).cellType)
+        newCell = self.getCell(can.x, can.y).duplicate()
         newCell.setCanister(True)
         self.setCell(can.x, can.y, newCell)
+
+    def print(self):
+        for row in self.board:
+            rowString = ""
+            for cell in row:
+                if cell.hasPlayer():
+                    rowString += PLAYER_CHARACTER
+                elif cell.hasCanister():
+                    rowString += CANISTER_CHARACTER
+                else:
+                    rowString += cell.cellType.value
+            print(rowString)
 
 
 class MoveableObject:
@@ -202,6 +214,22 @@ class MoveableObject:
         return str(self.x).zfill(2) + str(self.y).zfill(2)
 
 
+class PathState:
+    def __init__(self, x, y, previous, move):
+        self.x = x
+        self.y = y
+        if previous is None:
+            self.depth = 0
+            self.previous = None
+        else:
+            self.previous = previous
+            self.depth = previous.depth + 1
+        self.move = move
+
+    def getPos(self):
+        return self.x, self.y
+
+
 class Player(MoveableObject):
     def calculatePositionToPerformMove(self, direction, x, y):
         if direction == UP_MOVE:
@@ -213,24 +241,95 @@ class Player(MoveableObject):
         elif direction == LEFT_MOVE:
             return x + 1, y
 
-    def pathToPosition(self, board: List[List[Cell]], x, y):
-        pass
+    def getAvailableMoves(self, surroundings: List[Cell]):
+        moves = list()
+        if surroundings[0].isWalkable():
+            moves.append(UP_MOVE)
+
+        if surroundings[1].isWalkable():
+            moves.append(RIGHT_MOVE)
+
+        if surroundings[2].isWalkable():
+            moves.append(DOWN_MOVE)
+
+        if surroundings[3].isWalkable():
+            moves.append(LEFT_MOVE)
+        return moves
+
+    def distanceToPoint(self, start: Tuple, end: Tuple):
+        return math.sqrt((end[0] - start[0]) ** 2 + (end[1] - start[1]) ** 2)
+
+    def getPositionAfterMove(self, x, y, direction):
+        if direction == UP_MOVE:
+            return x, y - 1
+        if direction == DOWN_MOVE:
+            return x, y + 1
+        if direction == RIGHT_MOVE:
+            return x + 1, y
+        if direction == LEFT_MOVE:
+            return x - 1, y
+
+    def pathToPosition(self, board: Board, x, y):
+        openSet = list()
+        closedSet = list()
+        finalState = None
+        initialState = PathState(self.x, self.y, None, None)
+        openSet.append(initialState)
+
+        if self.x == x and self.y == y:
+            finalState = initialState
+
+        while len(openSet) > 0 and finalState is None:
+            openSet.sort(key=lambda val: self.distanceToPoint(val.getPos(), (x, y)) + val.depth, reverse=True)
+            localState = openSet.pop()
+            localX = localState.x
+            localY = localState.y
+            moves = self.getAvailableMoves(board.getSurroundings(localX, localY))
+            for move in moves:
+                moveX, moveY = self.getPositionAfterMove(localX, localY, move)
+                if (moveX, moveY) not in closedSet:
+                    newState = PathState(moveX, moveY, localState, move)
+                    openSet.append(newState)
+                    if moveX == x and moveY == y:
+                        finalState = newState
+
+            closedSet.append((localX, localY))
+
+        if finalState is None:
+            return None
+        else:
+            self.previousX = self.x
+            self.previousY = self.y
+            self.x = x
+            self.y = y
+            board.clearCell(board.player.previousX, board.player.previousY)
+            newCell = board.getCell(x, y).duplicate()
+            newCell.setPlayer(True)
+            board.setCell(x, y, newCell)
+            path = list()
+            previousState = finalState
+            while previousState.previous is not None:
+                path.append(previousState.move)
+                previousState = previousState.previous
+
+            path.reverse()
+            return path
 
 
 class Canister(MoveableObject):
 
-    def getPossibleMoves(self, surroundings: List[Cell]):
+    def getAvailableMoves(self, surroundings: List[Cell]):
         moves = list()
-        if surroundings[0].isPassable() and surroundings[2].isWalkable():
+        if surroundings[0].isWalkable() and surroundings[2].isWalkable():
             moves.append(UP_MOVE)
 
-        if surroundings[1].isPassable() and surroundings[3].isWalkable():
+        if surroundings[1].isWalkable() and surroundings[3].isWalkable():
             moves.append(RIGHT_MOVE)
 
-        if surroundings[2].isPassable() and surroundings[0].isWalkable():
+        if surroundings[2].isWalkable() and surroundings[0].isWalkable():
             moves.append(DOWN_MOVE)
 
-        if surroundings[3].isPassable() and surroundings[1].isWalkable():
+        if surroundings[3].isWalkable() and surroundings[1].isWalkable():
             moves.append(LEFT_MOVE)
 
         return moves
