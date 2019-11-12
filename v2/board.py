@@ -357,12 +357,12 @@ class Canister(MoveableObject):
         return can
 
     def isCornered(self, surroundings):
-        if surroundings[0].cellType == CellTypes.wall and surroundings[1] == CellTypes.wall:
+        if surroundings[0].cellType == CellTypes.wall and surroundings[1].cellType == CellTypes.wall:
             return True
-        if surroundings[1].cellType == CellTypes.wall and surroundings[2] == CellTypes.wall:
+        if surroundings[1].cellType == CellTypes.wall and surroundings[2].cellType == CellTypes.wall:
             return True
-        if surroundings[2].cellType == CellTypes.wall and surroundings[3] == CellTypes.wall:
+        if surroundings[2].cellType == CellTypes.wall and surroundings[3].cellType == CellTypes.wall:
             return True
-        if surroundings[3].cellType == CellTypes.wall and surroundings[0] == CellTypes.wall:
+        if surroundings[3].cellType == CellTypes.wall and surroundings[0].cellType == CellTypes.wall:
             return True
         return False

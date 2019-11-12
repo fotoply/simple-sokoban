@@ -62,33 +62,34 @@ def findSolution(board):
 
 
 def processState(closedStates, finalState, futureStates, maxDepth, openStates, currentState):
-    if currentState.board.getHash() not in closedStates and currentState.board.isWinable():
-        allActions = currentState.board.getAvailableActions()
-        for canX, canY in allActions:
-            canActions = allActions[canX, canY]
-            for action in canActions:
-                workingBoard = currentState.board.replicateBoard()
-                playerX, playerY = workingBoard.player.calculatePositionToPerformMove(action, canX, canY)
-                path_to_position = workingBoard.player.pathToPosition(workingBoard, playerX, playerY)
-                if path_to_position is not None:
-                    workingBoard.moveCanister(canX, canY, action)
-                    pushCan = workingBoard.player.pathToPosition(workingBoard, canX, canY)
-                    workingState = SolverState(currentState, workingBoard, ((canX, canY), action), path_to_position)
-                    # workingState.board.print()
-                    if workingBoard.isWon():
-                        if finalState is None:
-                            finalState = workingState
-                        else:
-                            if finalState.depth > workingState.depth:
+    if currentState.board.getHash() not in closedStates:
+        if currentState.board.isWinable():
+            allActions = currentState.board.getAvailableActions()
+            for canX, canY in allActions:
+                canActions = allActions[canX, canY]
+                for action in canActions:
+                    workingBoard = currentState.board.replicateBoard()
+                    playerX, playerY = workingBoard.player.calculatePositionToPerformMove(action, canX, canY)
+                    path_to_position = workingBoard.player.pathToPosition(workingBoard, playerX, playerY)
+                    if path_to_position is not None:
+                        workingBoard.moveCanister(canX, canY, action)
+                        pushCan = workingBoard.player.pathToPosition(workingBoard, canX, canY)
+                        workingState = SolverState(currentState, workingBoard, ((canX, canY), action), path_to_position)
+                        # workingState.board.print()
+                        if workingBoard.isWon():
+                            if finalState is None:
                                 finalState = workingState
+                            else:
+                                if finalState.depth > workingState.depth:
+                                    finalState = workingState
 
-                    if workingState.board.isWinable():
-                        if currentState.depth < maxDepth:
-                            openStates.append(workingState)
+                        if workingState.board.isWinable():
+                            if currentState.depth < maxDepth:
+                                openStates.append(workingState)
+                            else:
+                                futureStates.append(workingState)
                         else:
-                            futureStates.append(workingState)
-                    else:
-                        closedStates.add(workingState.board.getHash())
+                            closedStates.add(workingState.board.getHash())
         closedStates.add(currentState.board.getHash())
     return finalState
 
