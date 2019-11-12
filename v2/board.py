@@ -125,6 +125,12 @@ class Board:
 
         return True
 
+    def isWinable(self):
+        for can in self.canisters:
+            if can.isCornered(self.getSurroundings(can.x, can.y)) and self.getCell(can.x, can.y).cellType != CellTypes.objective:
+                return False
+        return True
+
     def getCanister(self, x, y):
         for can in self.canisters:
             if can.x == x and can.y == y:
@@ -267,7 +273,7 @@ class Player(MoveableObject):
         return moves
 
     def distanceToPoint(self, start: Tuple, end: Tuple):
-        return math.sqrt((end[0] - start[0]) ** 2 + (end[1] - start[1]) ** 2)
+        return (end[0] - start[0]) ** 2 + (end[1] - start[1]) ** 2
 
     def getPositionAfterMove(self, x, y, direction):
         if direction == UP_MOVE:
@@ -349,3 +355,14 @@ class Canister(MoveableObject):
         can.previousX = self.previousX
         can.previousY = self.previousY
         return can
+
+    def isCornered(self, surroundings):
+        if surroundings[0].cellType == CellTypes.wall and surroundings[1] == CellTypes.wall:
+            return True
+        if surroundings[1].cellType == CellTypes.wall and surroundings[2] == CellTypes.wall:
+            return True
+        if surroundings[2].cellType == CellTypes.wall and surroundings[3] == CellTypes.wall:
+            return True
+        if surroundings[3].cellType == CellTypes.wall and surroundings[0] == CellTypes.wall:
+            return True
+        return False

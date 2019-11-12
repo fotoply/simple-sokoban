@@ -17,7 +17,7 @@ class SolverState(object):
 
 
 def findSolution(board):
-    closedStates = list()
+    closedStates = set()
     openStates = list()
     futureStates = list()
 
@@ -39,10 +39,9 @@ def findSolution(board):
                 print("No solution is possible")
                 return
 
-            print("Increasing max depth (" + str(maxDepth+1) + ")" + " / Closed states: " + str(len(closedStates)))
+            print("Increasing max depth (" + str(maxDepth + 1) + ")" + " / Closed states: " + str(len(closedStates)))
             maxDepth += 1
-            for state in futureStates:
-                openStates.append(state)
+            openStates.extend(futureStates)
             futureStates.clear()
         else:
             print("Total states explored: " + str(len(closedStates)))
@@ -63,7 +62,7 @@ def findSolution(board):
 
 
 def processState(closedStates, finalState, futureStates, maxDepth, openStates, currentState):
-    if currentState.board.getHash() not in closedStates:
+    if currentState.board.getHash() not in closedStates and currentState.board.isWinable():
         allActions = currentState.board.getAvailableActions()
         for canX, canY in allActions:
             canActions = allActions[canX, canY]
@@ -83,16 +82,20 @@ def processState(closedStates, finalState, futureStates, maxDepth, openStates, c
                             if finalState.depth > workingState.depth:
                                 finalState = workingState
 
-                    if currentState.depth < maxDepth:
-                        openStates.append(workingState)
+                    if workingState.board.isWinable():
+                        if currentState.depth < maxDepth:
+                            openStates.append(workingState)
+                        else:
+                            futureStates.append(workingState)
                     else:
-                        futureStates.append(workingState)
-    closedStates.append(currentState.board.getHash())
+                        closedStates.add(workingState.board.getHash())
+        closedStates.add(currentState.board.getHash())
     return finalState
+
 
 if __name__ == "__main__":
     from v2.loader import getBoardFromFile
 
     beforeTime = time.time()
     findSolution(getBoardFromFile("../gamesetups/level3.txt"))
-    print("Time taken:" + str(time.time()-beforeTime))
+    print("Time taken:" + str(time.time() - beforeTime))
