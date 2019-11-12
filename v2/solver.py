@@ -6,10 +6,10 @@ from v2.board import Board
 class SolverState(object):
     def __init__(self, previousState, board, actionTuple, playerMoves):
         if previousState is None:
-            self.depth = 0
+            self.depth = 0 + len(playerMoves)
             self.previousState = None
         else:
-            self.depth = previousState.depth + 1
+            self.depth = previousState.depth + 1 + len(playerMoves)
             self.previousState = previousState
         self.board = board
         self.actionTuple = actionTuple
@@ -27,7 +27,7 @@ def findSolution(board):
     realisedBoard.initBoardFromStringArray(board)
 
     finalState = None
-    previousState = SolverState(None, realisedBoard, None, None)
+    previousState = SolverState(None, realisedBoard, None, list())
     openStates.append(previousState)
 
     while finalState is None:
@@ -98,5 +98,5 @@ if __name__ == "__main__":
     from v2.loader import getBoardFromFile
 
     beforeTime = time.time()
-    findSolution(getBoardFromFile("../gamesetups/MMMILevel.txt"))
+    findSolution(getBoardFromFile("../gamesetups/nowalls.txt"))
     print("Time taken:" + str(time.time() - beforeTime))
