@@ -145,7 +145,7 @@ class Board:
         return self.board[y][x]
 
     def clearCell(self, x, y):
-        self.setCell(x, y, Cell(CellTypes.empty))
+        self.setCell(x, y, Cell(self.getCell(x,y).cellType))
 
     def setCell(self, x, y, cell: Cell):
         self.board[y][x] = cell

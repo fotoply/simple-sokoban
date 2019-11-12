@@ -75,7 +75,7 @@ def processState(closedStates, finalState, futureStates, maxDepth, openStates, c
                         workingBoard.moveCanister(canX, canY, action)
                         pushCan = workingBoard.player.pathToPosition(workingBoard, canX, canY)
                         workingState = SolverState(currentState, workingBoard, ((canX, canY), action), path_to_position)
-                        # workingState.board.print()
+                        #workingState.board.print()
                         if workingBoard.isWon():
                             if finalState is None:
                                 finalState = workingState
