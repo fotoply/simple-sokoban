@@ -1,6 +1,5 @@
 import copy
 import enum
-import math
 from typing import List, Tuple
 
 WALL_CHARACTER = "#"
@@ -21,7 +20,6 @@ class CellTypes(enum.Enum):
     wall = WALL_CHARACTER
     empty = OPEN_SPACE_CHARACTER
     objective = OBJECTIVE_CHARACTER
-
 
 class Cell:
     def __init__(self, cellType: CellTypes):
@@ -145,7 +143,7 @@ class Board:
         return self.board[y][x]
 
     def clearCell(self, x, y):
-        self.setCell(x, y, Cell(self.getCell(x,y).cellType))
+        self.setCell(x, y, Cell(self.getCell(x, y).cellType))
 
     def setCell(self, x, y, cell: Cell):
         self.board[y][x] = cell

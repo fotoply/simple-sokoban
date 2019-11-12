@@ -16,7 +16,7 @@ class SolverState(object):
         self.playerMoves = playerMoves
 
 
-def findSolution(board):
+def findSolution(board, robotMode=False, heading="u"):
     closedStates = set()
     openStates = list()
     futureStates = list()
@@ -46,19 +46,93 @@ def findSolution(board):
         else:
             print("Total states explored: " + str(len(closedStates)))
             state = finalState
-            finalPath = list()
-            while state.previousState is not None:
-                finalPath.append(state.actionTuple[1])
-                state.playerMoves.reverse()
-                finalPath.extend(state.playerMoves)
-                state = state.previousState
 
-            finalPath.reverse()
-            string = ""
-            for s in finalPath:
-                string += s
-            print("Solution:")
-            print(string)
+            if not robotMode:
+                finalPath = list()
+                while state.previousState is not None:
+                    finalPath.append(state.actionTuple[1])
+                    state.playerMoves.reverse()
+                    finalPath.extend(state.playerMoves)
+                    state = state.previousState
+
+                finalPath.reverse()
+                string = ""
+                for s in finalPath:
+                    string += s
+                return string
+            else:
+                finalPath = ""
+                statePath = list()
+                statePath.append(finalState)
+                while state.previousState is not None:
+                    statePath.append(state.previousState)
+                    state = state.previousState
+                statePath.reverse()
+
+                localHeading = heading
+                for state in statePath:
+                    if state.actionTuple is not None:
+                        for move in state.playerMoves:
+                            forwardsMove = "f"
+                            extraPath, localHeading = parseMove(forwardsMove, localHeading, move)
+                            finalPath += extraPath
+                        extraPath, localHeading = parseMove("o", localHeading, state.actionTuple[1])
+                        finalPath += extraPath
+                return finalPath
+
+
+def parseMove(forwardsMove, rotation, move):
+    if move == rotation:
+        return forwardsMove, rotation
+    else:
+        if isOpposites(move, rotation):
+            path = "u" + forwardsMove
+            rotation = getOpposite(rotation)
+            return path, rotation
+        else:
+            rotation = getRotationDirection(move, rotation)
+            path = rotation + forwardsMove
+            return path, move
+
+
+def getRotationDirection(move, heading):
+    if move == "r":
+        if heading == "u":
+            return "r"
+        elif heading == "d":
+            return "l"
+    if move == "l":
+        if heading == "u":
+            return "l"
+        elif heading == "d":
+            return "r"
+    if move == "u":
+        if heading == "l":
+            return "r"
+        elif heading == "r":
+            return "l"
+    if move == "d":
+        if heading == "l":
+            return "l"
+        elif heading == "r":
+            return "r"
+
+
+def isOpposites(move, heading):
+    if getOpposite(move) == heading:
+        return True
+    return False
+
+def getOpposite(heading):
+    if heading == "r":
+        return "l"
+    if heading == "l":
+        return "r"
+    if heading == "u":
+        return "d"
+    if heading == "d":
+        return "u"
+
 
 
 def processState(closedStates, finalState, futureStates, maxDepth, openStates, currentState):
@@ -98,5 +172,7 @@ if __name__ == "__main__":
     from v2.loader import getBoardFromFile
 
     beforeTime = time.time()
-    findSolution(getBoardFromFile("../gamesetups/nowalls.txt"))
+    solution = findSolution(getBoardFromFile("../gamesetups/level2.txt"), robotMode=True)
+    print("Solution:")
+    print(solution)
     print("Time taken:" + str(time.time() - beforeTime))
