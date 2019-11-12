@@ -98,5 +98,5 @@ if __name__ == "__main__":
     from v2.loader import getBoardFromFile
 
     beforeTime = time.time()
-    findSolution(getBoardFromFile("../gamesetups/level3.txt"))
+    findSolution(getBoardFromFile("../gamesetups/level6.txt"))
     print("Time taken:" + str(time.time() - beforeTime))
