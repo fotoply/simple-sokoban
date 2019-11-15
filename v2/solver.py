@@ -172,7 +172,7 @@ if __name__ == "__main__":
     from v2.loader import getBoardFromFile
 
     beforeTime = time.time()
-    solution = findSolution(getBoardFromFile("../gamesetups/level2.txt"), robotMode=True)
+    solution = findSolution(getBoardFromFile("../gamesetups/level7.txt"), robotMode=True)
     print("Solution:")
     print(solution)
     print("Time taken:" + str(time.time() - beforeTime))

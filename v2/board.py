@@ -28,7 +28,7 @@ class Cell:
         self.canister = False
 
     def __str__(self):
-        return self.cellType
+        return str(self.cellType.value)
 
     def duplicate(self):
         newCell = Cell(self.cellType)
@@ -179,7 +179,8 @@ class Board:
         newCell.setCanister(True)
         self.setCell(can.x, can.y, newCell)
 
-    def print(self):
+    def __str__(self):
+        string = ""
         for row in self.board:
             rowString = ""
             for cell in row:
@@ -189,7 +190,11 @@ class Board:
                     rowString += CANISTER_CHARACTER
                 else:
                     rowString += cell.cellType.value
-            print(rowString)
+            string += rowString + "\n"
+        return string
+
+    def print(self):
+            print(str(self))
 
 
 class MoveableObject:
