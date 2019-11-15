@@ -76,7 +76,7 @@ def findSolution(board, robotMode=False, heading="u"):
                             forwardsMove = "f"
                             extraPath, localHeading = parseMove(forwardsMove, localHeading, move)
                             finalPath += extraPath
-                        extraPath, localHeading = parseMove("o", localHeading, state.actionTuple[1])
+                        extraPath, localHeading = parseMove("fo", localHeading, state.actionTuple[1])
                         finalPath += extraPath
                 return finalPath
 
