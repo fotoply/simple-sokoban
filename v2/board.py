@@ -301,10 +301,10 @@ class Player(MoveableObject):
             finalState = initialState
 
         while len(openSet) > 0 and finalState is None:
-            openSet.sort(key=lambda val: self.distanceToPoint(val.getPos(), (x, y)) + val.depth, reverse=True)
-            localState = openSet.pop()
-            #localState = self.getBestPoint(openSet, x, y)
-            #openSet.remove(localState)
+            #openSet.sort(key=lambda val: self.distanceToPoint(val.getPos(), (x, y)) + val.depth, reverse=True)
+            #localState = openSet.pop()
+            localState = self.getBestPoint(openSet, x, y)
+            openSet.remove(localState)
             localX = localState.x
             localY = localState.y
             moves = self.getAvailableMoves(board.getSurroundings(localX, localY))
