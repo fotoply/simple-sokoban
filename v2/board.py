@@ -21,6 +21,7 @@ class CellTypes(enum.Enum):
     empty = OPEN_SPACE_CHARACTER
     objective = OBJECTIVE_CHARACTER
 
+
 class Cell:
     def __init__(self, cellType: CellTypes):
         self.cellType = cellType
@@ -125,7 +126,8 @@ class Board:
 
     def isWinable(self):
         for can in self.canisters:
-            if can.isCornered(self.getSurroundings(can.x, can.y)) and self.getCell(can.x, can.y).cellType != CellTypes.objective:
+            if can.isCornered(self.getSurroundings(can.x, can.y)) and self.getCell(can.x,
+                                                                                   can.y).cellType != CellTypes.objective:
                 return False
         return True
 
@@ -194,7 +196,7 @@ class Board:
         return string
 
     def print(self):
-            print(str(self))
+        print(str(self))
 
 
 class MoveableObject:
@@ -301,6 +303,8 @@ class Player(MoveableObject):
         while len(openSet) > 0 and finalState is None:
             openSet.sort(key=lambda val: self.distanceToPoint(val.getPos(), (x, y)) + val.depth, reverse=True)
             localState = openSet.pop()
+            #localState = self.getBestPoint(openSet, x, y)
+            #openSet.remove(localState)
             localX = localState.x
             localY = localState.y
             moves = self.getAvailableMoves(board.getSurroundings(localX, localY))
@@ -333,6 +337,16 @@ class Player(MoveableObject):
 
             path.reverse()
             return path
+
+    def getBestPoint(self, openSet, x, y):
+        import math
+        bestPoint = None
+        shortestDistance = math.inf
+        for point in openSet:
+            if self.distanceToPoint(point.getPos(), (x, y)) + point.depth < shortestDistance:
+                bestPoint = point
+
+        return bestPoint
 
 
 class Canister(MoveableObject):
