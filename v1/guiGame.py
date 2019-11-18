@@ -15,7 +15,7 @@ window.finalize()
 
 board = Board()
 
-board.initBoard(getBoardFromFile("../gamesetups/level3.txt"))
+board.initBoard(getBoardFromFile("../gamesetups/MMMILevel.txt"))
 
 canvas = window.Element('canvas')
 

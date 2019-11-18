@@ -41,8 +41,10 @@ def findSolution(board, robotMode=False, heading="u"):
 
             print("Increasing max depth (" + str(maxDepth + 1) + ")" + " / Closed states: " + str(len(closedStates)))
             maxDepth += 1
-            openStates.extend(futureStates)
-            futureStates.clear()
+            for state in futureStates:
+                if state.depth < maxDepth:
+                    openStates.append(state)
+                    futureStates.remove(state)
         else:
             print("Total states explored: " + str(len(closedStates)))
             state = finalState
@@ -61,7 +63,7 @@ def findSolution(board, robotMode=False, heading="u"):
                     string += s
                 return string
             else:
-                finalPath = ""
+                finalPath = "f"
                 statePath = list()
                 statePath.append(finalState)
                 while state.previousState is not None:
@@ -78,8 +80,9 @@ def findSolution(board, robotMode=False, heading="u"):
                             finalPath += extraPath
                         extraPath, localHeading = parseMove("fo", localHeading, state.actionTuple[1])
                         finalPath += extraPath
+                while finalPath.find("fofo") != -1:
+                    finalPath = finalPath.replace("fofo", "ffo")
                 return finalPath
-
 
 def parseMove(forwardsMove, rotation, move):
     if move == rotation:
@@ -158,7 +161,7 @@ def processState(closedStates, finalState, futureStates, maxDepth, openStates, c
                                     finalState = workingState
 
                         if workingState.board.isWinable():
-                            if currentState.depth < maxDepth:
+                            if workingState.depth < maxDepth:
                                 openStates.append(workingState)
                             else:
                                 futureStates.append(workingState)
@@ -172,7 +175,7 @@ if __name__ == "__main__":
     from v2.loader import getBoardFromFile
 
     beforeTime = time.time()
-    solution = findSolution(getBoardFromFile("../gamesetups/MMMILevel.txt"), robotMode=True)
+    solution = findSolution(getBoardFromFile("../gamesetups/MMMILevel.txt"), robotMode=True, heading="u")
     print("Solution:")
     print(solution)
     print("Time taken:" + str(time.time() - beforeTime))
