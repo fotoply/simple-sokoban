@@ -15,7 +15,6 @@ RIGHT_MOVE = "r"
 DOWN_MOVE = "d"
 LEFT_MOVE = "l"
 
-
 class CellTypes(enum.Enum):
     wall = WALL_CHARACTER
     empty = OPEN_SPACE_CHARACTER
@@ -60,6 +59,9 @@ class Cell:
         else:
             return True
 
+EMPTY_CELL = Cell(CellTypes.empty)
+OBJECTIVE_CELL = Cell(CellTypes.objective)
+WALL_CELL = Cell(CellTypes.wall)
 
 class Board:
     ###
@@ -75,9 +77,9 @@ class Board:
             for x in range(len(board[y])):
                 stringCell = board[y][x]
                 if stringCell == WALL_CHARACTER:
-                    row.append(Cell(CellTypes.wall))
+                    row.append(WALL_CELL)
                 elif stringCell == OBJECTIVE_CHARACTER:
-                    row.append(Cell(CellTypes.objective))
+                    row.append(OBJECTIVE_CELL)
                 elif stringCell == PLAYER_CHARACTER or stringCell == PLAYER_ON_OBJECTIVE_CHARACTER:
                     if stringCell == PLAYER_ON_OBJECTIVE_CHARACTER:
                         row.append(Cell(CellTypes.objective))
@@ -94,7 +96,7 @@ class Board:
                     can = Canister(x, y)
                     self.canisters.append(can)
                 else:
-                    row.append(Cell(CellTypes.empty))
+                    row.append(EMPTY_CELL)
             self.board.append(row)
 
     def getAvailableActions(self):
@@ -145,7 +147,13 @@ class Board:
         return self.board[y][x]
 
     def clearCell(self, x, y):
-        self.setCell(x, y, Cell(self.getCell(x, y).cellType))
+        target = self.getCell(x, y).cellType
+        if target == CellTypes.objective:
+            self.setCell(x, y, OBJECTIVE_CELL)
+        elif target == CellTypes.wall:
+            self.setCell(x, y, WALL_CELL)
+        else:
+            self.setCell(x, y, EMPTY_CELL)
 
     def setCell(self, x, y, cell: Cell):
         self.board[y][x] = cell
@@ -162,7 +170,7 @@ class Board:
         return newBoard
 
     def getEdgeCell(self):
-        return Cell(CellTypes.wall)
+        return WALL_CELL
 
     def getSurroundings(self, x, y):
         surroundings = list()
