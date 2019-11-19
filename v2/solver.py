@@ -41,10 +41,13 @@ def findSolution(board, robotMode=False, heading="u"):
 
             print("Increasing max depth (" + str(maxDepth + 1) + ")" + " / Closed states: " + str(len(closedStates)))
             maxDepth += 1
+            newFuture = list()
             for state in futureStates:
                 if state.depth < maxDepth:
                     openStates.append(state)
-                    futureStates.remove(state)
+                else:
+                    newFuture.append(state)
+            futureStates = newFuture
         else:
             print("Total states explored: " + str(len(closedStates)))
             state = finalState
@@ -175,7 +178,7 @@ if __name__ == "__main__":
     from v2.loader import getBoardFromFile
 
     beforeTime = time.time()
-    solution = findSolution(getBoardFromFile("../gamesetups/level7.txt"), robotMode=True, heading="u")
+    solution = findSolution(getBoardFromFile("../gamesetups/MMMILevel.txt"), robotMode=True, heading="u")
     print("Solution:")
     print(solution)
     print("Time taken:" + str(time.time() - beforeTime))

@@ -351,8 +351,10 @@ class Player(MoveableObject):
         bestPoint = None
         shortestDistance = math.inf
         for point in openSet:
-            if self.distanceToPoint(point.getPos(), (x, y)) + point.depth < shortestDistance:
+            pointDistance = self.distanceToPoint(point.getPos(), (x, y)) + point.depth
+            if pointDistance < shortestDistance:
                 bestPoint = point
+                shortestDistance = pointDistance
 
         return bestPoint
 
