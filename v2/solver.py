@@ -87,6 +87,7 @@ def findSolution(board, robotMode=False, heading="u"):
                     finalPath = finalPath.replace("fofo", "ffo")
                 return finalPath
 
+
 def parseMove(forwardsMove, rotation, move):
     if move == rotation:
         return forwardsMove, rotation
@@ -129,6 +130,7 @@ def isOpposites(move, heading):
         return True
     return False
 
+
 def getOpposite(heading):
     if heading == "r":
         return "l"
@@ -138,7 +140,6 @@ def getOpposite(heading):
         return "d"
     if heading == "d":
         return "u"
-
 
 
 def processState(closedStates, finalState, futureStates, maxDepth, openStates, currentState):
@@ -155,7 +156,7 @@ def processState(closedStates, finalState, futureStates, maxDepth, openStates, c
                         workingBoard.moveCanister(canX, canY, action)
                         pushCan = workingBoard.player.pathToPosition(workingBoard, canX, canY)
                         workingState = SolverState(currentState, workingBoard, ((canX, canY), action), path_to_position)
-                        #workingState.board.print()
+                        # workingState.board.print()
                         if workingBoard.isWon():
                             if finalState is None:
                                 finalState = workingState
